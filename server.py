@@ -25,12 +25,7 @@ class GameServer:
     def reset_game_state(self):
         self.paddles = {0: 250, 1: 250}
         self.scores = [0, 0]
-        self.ball = {
-            "x": WIDTH // 2,
-            "y": HEIGHT // 2,
-            "vx": BALL_SPEED * random.choice([-1, 1]),
-            "vy": BALL_SPEED * random.choice([-1, 1])
-        }
+        self.reset_ball()
         self.countdown = COUNTDOWN_START
         self.game_over = False
         self.winner = None

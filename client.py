@@ -41,8 +41,42 @@ def receive():
 font_win = font.Font(None, 72)
 font_main = font.Font(None, 36)
 # --- ЗОБРАЖЕННЯ ----
+BG_IMG = image.load("images/Board.png")
+BG_IMG = transform.scale(BG_IMG, (WIDTH, HEIGHT))
+
+PLAYER1_IMG = image.load("images/Player1.png")
+PLAYER1_IMG = transform.scale(PLAYER1_IMG, (20, 100))
+
+PLAYER2_IMG = image.load("images/Player2.png")
+PLAYER2_IMG = transform.scale(PLAYER2_IMG, (20, 100))
+
+BALL_IMG = image.load("images/Ball.png")
+BALL_IMG = transform.scale(BALL_IMG, (20, 20))
+
+MOTION_BALL_IMG = image.load("images/MotionBall.png")
+MOTION_BALL_IMG = transform.scale(MOTION_BALL_IMG, (50, 35))
+
+SCORE_BAR_LEFT = image.load("images/ScoreBar.png")
+SCORE_BAR_LEFT = transform.scale(SCORE_BAR_LEFT, (350, 60))
+
+SCORE_BAR_RIGHT = image.load("images/ScoreBar.png")
+SCORE_BAR_RIGHT = transform.scale(SCORE_BAR_RIGHT, (350, 60))
+SCORE_BAR_RIGHT = transform.flip(SCORE_BAR_RIGHT, True, False)
 
 # --- ЗВУКИ ---
+is_start_music = False
+lose_sound = False
+win_sound = False
+
+mixer.init()
+mixer.music.load("sounds/newbattle.wav")
+WALL_HIT_SOUND = mixer.Sound("sounds/Fire 2.mp3")
+PLATFORM_HIT_SOUND = mixer.Sound("sounds/Fire 4.mp3")
+LOSE_SOUND = mixer.Sound("sounds/Game Over.mp3")
+
+WALL_HIT_SOUND.set_volume(settings.volume)
+PLATFORM_HIT_SOUND.set_volume(settings.volume)
+LOSE_SOUND.set_volume(settings.volume)
 
 # --- ГРА ---
 game_over = False
@@ -88,20 +122,20 @@ while True:
         continue  # Блокує гру після перемоги
 
     if game_state:
-        screen.fill((30, 30, 30))
-        draw.rect(screen, (0, 255, 0), (20, game_state['paddles']['0'], 20, 100))
-        draw.rect(screen, (255, 0, 255), (WIDTH - 40, game_state['paddles']['1'], 20, 100))
-        draw.circle(screen, (255, 255, 255), (game_state['ball']['x'], game_state['ball']['y']), 10)
+        print(game_state)
+        screen.blit(BG_IMG, (0, 0))
+        screen.blit(PLAYER1_IMG, (20, game_state['paddles']['0']))
+        screen.blit(PLAYER2_IMG, (WIDTH - 40, game_state['paddles']['1']))
+        screen.blit(BALL_IMG, (game_state['ball']['x'], game_state['ball']['y']))
         score_text = font_main.render(f"{game_state['scores'][0]} : {game_state['scores'][1]}", True, (255, 255, 255))
         screen.blit(score_text, (WIDTH // 2 -25, 20))
-
+        screen.blit(SCORE_BAR_LEFT, (0, 0))
+        screen.blit(SCORE_BAR_RIGHT, (450, 0))
         if game_state['sound_event']:
             if game_state['sound_event'] == 'wall_hit':
-                # звук відбиття м'ячика від стін
-                pass
+                WALL_HIT_SOUND.play()
             if game_state['sound_event'] == 'platform_hit':
-                # звук відбиття м'ячика від платформи
-                pass
+                PLATFORM_HIT_SOUND.play()
 
     else:
         wating_text = font_main.render(f"Очікування гравців...", True, (255, 255, 255))
